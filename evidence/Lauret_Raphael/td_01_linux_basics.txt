@@ -140,4 +140,3 @@ Report bugs to: bug-grep@gnu.org
 GNU grep home page: <https://www.gnu.org/software/grep/>
 General help using GNU software: <https://www.gnu.org/gethelp/>
 
-#4
