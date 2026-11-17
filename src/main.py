@@ -5,6 +5,9 @@ import json
 
 DATA_DIR = Path("data/sample")
 
+# These starter values mirror config/settings.yml.
+# settings.yml is a human-readable configuration contract in the CORE.
+# Parsing YAML is optional and is not required by the 18-hour lab sequence.
 LOOKBACK_LABEL = "1 month"
 INTERVAL_LABEL = "Daily"
 
@@ -22,8 +25,6 @@ def load_prices():
 def filter_prices(prices, ticker):
     return [row for row in prices if row["ticker"] == ticker]
 
-
-# New functions for part 8
 def get_first_close(prices):
     if not prices:
         return 0.0
@@ -39,14 +40,12 @@ def get_last_close(prices):
 def display_market_summary(asset, prices, show_currency=True):
     first_close = get_first_close(prices)
     last_close = get_last_close(prices)
-
     currency_suffix = f" {asset.get('currency', '')}" if show_currency else ""
 
     print(f"{asset['ticker']} - {asset['name']}")
     print(f"Observations : {len(prices)}")
     print(f"First close  : {first_close:.2f}{currency_suffix}")
     print(f"Last close   : {last_close:.2f}{currency_suffix}")
-
 
 def main():
     instruments = load_instruments()
@@ -66,12 +65,13 @@ def main():
     print()
 
     print("Instrument")
-    display_market_summary(instrument, instrument_prices, show_currency=True)
+    display_market_summary(instrument, instrument_prices)
     print()
 
     print("Benchmark")
-    display_market_summary(benchmark, benchmark_prices, show_currency=False)
-
+    display_market_summary(
+        benchmark, benchmark_prices, show_currency=False
+    )
 
 if __name__ == "__main__":
     main()
