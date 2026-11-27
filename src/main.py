@@ -1,7 +1,7 @@
 from pathlib import Path
 import csv
 import json
-
+from analytics import align_series
 
 DATA_DIR = Path("data/sample")
 LOOKBACK_LABEL = "1 month"
@@ -54,6 +54,11 @@ def main():
     instrument_prices = filter_prices(prices, instrument["ticker"])
     benchmark_prices = filter_prices(prices, benchmark["ticker"])
 
+    aligned_instrument, aligned_benchmark = align_series(
+        instrument_prices,
+        benchmark_prices,
+    )
+
     print("=== MarketPulse ===")
     print()
     print("Market configuration")
@@ -62,12 +67,12 @@ def main():
     print()
 
     print("Instrument")
-    display_market_summary(instrument, instrument_prices)
+    display_market_summary(instrument, aligned_instrument)
     print()
 
     print("Benchmark")
     display_market_summary(
-        benchmark, benchmark_prices, show_currency=False
+        benchmark, aligned_benchmark, show_currency=False
     )
 
 
