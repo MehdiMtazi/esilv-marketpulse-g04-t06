@@ -1,12 +1,15 @@
 from pathlib import Path
 import csv
 import json
+
 from analytics import (
     align_series,
     calculate_period_return,
     calculate_relative_performance,
     calculate_base_100,
 )
+from providers.yahoo_provider import fetch_yahoo_prices, YAHOO_SYMBOLS
+
 
 DATA_DIR = Path("data/sample")
 LOOKBACK_LABEL = "1 month"
@@ -64,14 +67,23 @@ def display_market_summary(asset, prices, show_currency=True):
 
 def main():
     instruments = load_instruments()
-    raw_prices = load_prices()
-    prices = [normalize_price_row(row) for row in raw_prices]
 
     instrument = instruments["instrument"]
     benchmark = instruments["benchmark"]
 
-    instrument_prices = filter_prices(prices, instrument["ticker"])
-    benchmark_prices = filter_prices(prices, benchmark["ticker"])
+    instrument_prices = fetch_yahoo_prices(
+        symbol=YAHOO_SYMBOLS[instrument["ticker"]],
+        canonical_ticker=instrument["ticker"],
+        period="1mo",
+        interval="1d",
+    )
+
+    benchmark_prices = fetch_yahoo_prices(
+        symbol=YAHOO_SYMBOLS[benchmark["ticker"]],
+        canonical_ticker=benchmark["ticker"],
+        period="1mo",
+        interval="1d",
+    )
 
     aligned_instrument, aligned_benchmark = align_series(
         instrument_prices,
@@ -80,16 +92,20 @@ def main():
 
     instrument_return = calculate_period_return(aligned_instrument)
     benchmark_return = calculate_period_return(aligned_benchmark)
+
     relative_performance = calculate_relative_performance(
         instrument_return,
         benchmark_return,
     )
 
-    instrument_base_100 = calculate_base_100(aligned_instrument)  
-    benchmark_base_100 = calculate_base_100(aligned_benchmark) 
-    width = max(len(instrument["ticker"]), len(benchmark["ticker"])) 
+    instrument_base_100 = calculate_base_100(aligned_instrument)
+    benchmark_base_100 = calculate_base_100(aligned_benchmark)
+    width = max(len(instrument["ticker"]), len(benchmark["ticker"]))
 
     print("=== MarketPulse ===")
+    print()
+    print("Provider")
+    print("Yahoo Finance via yfinance")
     print()
     print("Market configuration")
     print(f"Period   : {LOOKBACK_LABEL}")
