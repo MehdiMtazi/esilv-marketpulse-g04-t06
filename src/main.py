@@ -4,10 +4,6 @@ import json
 
 
 DATA_DIR = Path("data/sample")
-
-# These starter values mirror config/settings.yml.
-# settings.yml is a human-readable configuration contract in the CORE.
-# Parsing YAML is optional and is not required by the 18-hour lab sequence.
 LOOKBACK_LABEL = "1 month"
 INTERVAL_LABEL = "Daily"
 
