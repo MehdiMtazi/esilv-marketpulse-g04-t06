@@ -5,6 +5,7 @@ from analytics import (
     align_series,
     calculate_period_return,
     calculate_relative_performance,
+    calculate_base_100,
 )
 
 DATA_DIR = Path("data/sample")
@@ -84,6 +85,10 @@ def main():
         benchmark_return,
     )
 
+    instrument_base_100 = calculate_base_100(aligned_instrument)  
+    benchmark_base_100 = calculate_base_100(aligned_benchmark) 
+    width = max(len(instrument["ticker"]), len(benchmark["ticker"])) 
+
     print("=== MarketPulse ===")
     print()
     print("Market configuration")
@@ -107,6 +112,19 @@ def main():
     print(
         f"{instrument['ticker']} vs {benchmark['ticker']} : "
         f"{relative_performance:+.2f} percentage points"
+    )
+
+    print()
+    print("Base 100")
+    print(
+        f"{instrument['ticker']:<{width}} : "
+        f"{instrument_base_100[0]['value']:.2f} -> "
+        f"{instrument_base_100[-1]['value']:.2f}"
+    )
+    print(
+        f"{benchmark['ticker']:<{width}} : "
+        f"{benchmark_base_100[0]['value']:.2f} -> "
+        f"{benchmark_base_100[-1]['value']:.2f}"
     )
 
 
